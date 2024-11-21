@@ -405,7 +405,7 @@ const RegisterPage = () => {
       </div>
 
       {/* Right Side - Register Form */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 relative">
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 py-8 sm:py-12 relative">
         {/* Theme Toggle - Desktop (Outside form container) */}
         <button
           onClick={() => setIsDark(!isDark)}
@@ -449,15 +449,15 @@ const RegisterPage = () => {
 
         <div className="w-full max-w-2xl">
           {/* Mobile Header with Logo and Theme Toggle */}
-          <div className="lg:hidden flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
+          <div className="lg:hidden flex items-center justify-between mb-6 sm:mb-8">
+            <div className="flex items-center gap-2 sm:gap-3">
               <div
-                className={`w-10 h-10 ${
+                className={`w-9 h-9 sm:w-10 sm:h-10 ${
                   isDark ? "bg-white" : "bg-neutral-900"
                 } flex items-center justify-center`}
               >
                 <svg
-                  className={`w-6 h-6 ${
+                  className={`w-5 h-5 sm:w-6 sm:h-6 ${
                     isDark ? "text-neutral-900" : "text-white"
                   }`}
                   fill="currentColor"
@@ -467,7 +467,7 @@ const RegisterPage = () => {
                 </svg>
               </div>
               <h1
-                className={`text-2xl font-bold tracking-tight ${
+                className={`text-xl sm:text-2xl font-bold tracking-tight ${
                   isDark ? "text-white" : "text-neutral-900"
                 }`}
               >
@@ -517,21 +517,21 @@ const RegisterPage = () => {
           </div>
 
           <div
-            className={`border p-8 transition-all duration-300 ${
+            className={`border p-5 sm:p-6 lg:p-8 transition-all duration-300 ${
               isDark
                 ? "bg-neutral-900 border-neutral-800"
                 : "bg-white border-neutral-200 shadow-lg"
             }`}
           >
-            <div className="mb-6">
+            <div className="mb-5 sm:mb-6">
               <h2
-                className={`text-3xl font-bold mb-2 ${
+                className={`text-2xl sm:text-3xl font-bold mb-2 ${
                   isDark ? "text-white" : "text-neutral-900"
                 }`}
               >
                 Create account
               </h2>
-              <p className={isDark ? "text-neutral-400" : "text-neutral-600"}>
+              <p className={`text-sm sm:text-base ${isDark ? "text-neutral-400" : "text-neutral-600"}`}>
                 Join StreamVault and start sharing
               </p>
             </div>
@@ -539,12 +539,12 @@ const RegisterPage = () => {
             {/* Error Message */}
             {error && (
               <div
-                className={`mb-6 p-4 border-l-4 border-red-500 animate-[slideIn_0.3s_ease-out] ${
+                className={`mb-4 sm:mb-6 p-3 sm:p-4 border-l-4 border-red-500 animate-[slideIn_0.3s_ease-out] ${
                   isDark ? "bg-red-950/50" : "bg-red-50"
                 }`}
               >
                 <p
-                  className={`text-sm ${
+                  className={`text-xs sm:text-sm ${
                     isDark ? "text-red-400" : "text-red-700"
                   }`}
                 >
@@ -554,9 +554,9 @@ const RegisterPage = () => {
             )}
 
             {/* Register Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               {/* Two Column Grid for Text Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 {/* Username */}
                 <div className="group">
                   <label
@@ -576,7 +576,7 @@ const RegisterPage = () => {
                     value={formData.username}
                     onChange={handleChange}
                     placeholder="username"
-                    className={`w-full px-4 py-2.5 border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
                       isDark
                         ? "bg-neutral-950 border-neutral-800 text-white placeholder-neutral-600 focus:border-white focus:ring-white focus:ring-offset-neutral-900"
                         : "bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400 focus:border-neutral-900 focus:ring-neutral-900 focus:ring-offset-white"
@@ -604,7 +604,7 @@ const RegisterPage = () => {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="email@example.com"
-                    className={`w-full px-4 py-2.5 border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
                       isDark
                         ? "bg-neutral-950 border-neutral-800 text-white placeholder-neutral-600 focus:border-white focus:ring-white focus:ring-offset-neutral-900"
                         : "bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400 focus:border-neutral-900 focus:ring-neutral-900 focus:ring-offset-white"
@@ -633,7 +633,7 @@ const RegisterPage = () => {
                   value={formData.fullName}
                   onChange={handleChange}
                   placeholder="John Doe"
-                  className={`w-full px-4 py-2.5 border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                  className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
                     isDark
                       ? "bg-neutral-950 border-neutral-800 text-white placeholder-neutral-600 focus:border-white focus:ring-white focus:ring-offset-neutral-900"
                       : "bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400 focus:border-neutral-900 focus:ring-neutral-900 focus:ring-offset-white"
@@ -643,7 +643,7 @@ const RegisterPage = () => {
               </div>
 
               {/* Two Column Grid for Passwords */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 {/* Password */}
                 <div className="group">
                   <label
@@ -663,7 +663,7 @@ const RegisterPage = () => {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="••••••••"
-                    className={`w-full px-4 py-2.5 border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
                       isDark
                         ? "bg-neutral-950 border-neutral-800 text-white placeholder-neutral-600 focus:border-white focus:ring-white focus:ring-offset-neutral-900"
                         : "bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400 focus:border-neutral-900 focus:ring-neutral-900 focus:ring-offset-white"
@@ -691,7 +691,7 @@ const RegisterPage = () => {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     placeholder="••••••••"
-                    className={`w-full px-4 py-2.5 border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+                    className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${
                       isDark
                         ? "bg-neutral-950 border-neutral-800 text-white placeholder-neutral-600 focus:border-white focus:ring-white focus:ring-offset-neutral-900"
                         : "bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400 focus:border-neutral-900 focus:ring-neutral-900 focus:ring-offset-white"
@@ -702,7 +702,7 @@ const RegisterPage = () => {
               </div>
 
               {/* Two Column Grid for File Uploads */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 {/* Avatar Upload */}
                 <div className="group">
                   <label
@@ -727,7 +727,7 @@ const RegisterPage = () => {
                     id="avatar"
                     accept="image/*"
                     onChange={handleAvatarChange}
-                    className={`w-full px-4 py-2.5 border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed file:mr-3 file:py-1.5 file:px-3 file:border-0 file:text-xs file:font-semibold file:cursor-pointer ${
+                    className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed file:mr-2 sm:file:mr-3 file:py-1 sm:file:py-1.5 file:px-2 sm:file:px-3 file:border-0 file:text-xs file:font-semibold file:cursor-pointer ${
                       isDark
                         ? "bg-neutral-950 border-neutral-800 text-white file:bg-white file:text-neutral-900 hover:file:bg-neutral-100 focus:border-white focus:ring-white focus:ring-offset-neutral-900"
                         : "bg-white border-neutral-300 text-neutral-900 file:bg-neutral-900 file:text-white hover:file:bg-neutral-800 focus:border-neutral-900 focus:ring-neutral-900 focus:ring-offset-white"
@@ -771,7 +771,7 @@ const RegisterPage = () => {
                     id="coverImage"
                     accept="image/*"
                     onChange={handleCoverImageChange}
-                    className={`w-full px-4 py-2.5 border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed file:mr-3 file:py-1.5 file:px-3 file:border-0 file:text-xs file:font-semibold file:cursor-pointer ${
+                    className={`w-full px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed file:mr-2 sm:file:mr-3 file:py-1 sm:file:py-1.5 file:px-2 sm:file:px-3 file:border-0 file:text-xs file:font-semibold file:cursor-pointer ${
                       isDark
                         ? "bg-neutral-950 border-neutral-800 text-white file:bg-white file:text-neutral-900 hover:file:bg-neutral-100 focus:border-white focus:ring-white focus:ring-offset-neutral-900"
                         : "bg-white border-neutral-300 text-neutral-900 file:bg-neutral-900 file:text-white hover:file:bg-neutral-800 focus:border-neutral-900 focus:ring-neutral-900 focus:ring-offset-white"
@@ -796,7 +796,7 @@ const RegisterPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full py-3.5 px-4 font-semibold transition-all duration-200 ${
+                className={`w-full py-3 sm:py-3.5 px-4 text-sm sm:text-base font-semibold transition-all duration-200 ${
                   loading
                     ? isDark
                       ? "bg-neutral-800 text-neutral-500 cursor-not-allowed"
@@ -836,8 +836,8 @@ const RegisterPage = () => {
             </form>
 
             {/* Login Link */}
-            <div className="mt-6 text-center">
-              <p className={isDark ? "text-neutral-400" : "text-neutral-600"}>
+            <div className="mt-5 sm:mt-6 text-center">
+              <p className={`text-sm sm:text-base ${isDark ? "text-neutral-400" : "text-neutral-600"}`}>
                 Already have an account?{" "}
                 <a
                   href="/login"
@@ -855,7 +855,7 @@ const RegisterPage = () => {
 
           {/* Footer */}
           <p
-            className={`text-center text-sm mt-8 ${
+            className={`text-center text-xs sm:text-sm mt-6 sm:mt-8 px-2 ${
               isDark ? "text-neutral-600" : "text-neutral-500"
             }`}
           >
