@@ -11,16 +11,6 @@ app.use(express.urlencoded({ limit: "16kb", extended: true }));
 app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
 
-// //Health Check Route ( testing )
-// app.get("/health", (req, res) => res.status(200).json({ ok: true }));
-// // Testing Router for Error
-// app.get(
-//   "/test-error",
-//   asyncHandler(async (req, res) => {
-//     throw new ApiError(400, "This is a test Error");
-//   })
-// );
-
 //404 Handler
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
@@ -36,5 +26,15 @@ app.use((error, req, res, next) => {
     ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
   });
 });
+
+// //Health Check Route ( testing )
+// app.get("/health", (req, res) => res.status(200).json({ ok: true }));
+// // Testing Router for Error
+// app.get(
+//   "/test-error",
+//   asyncHandler(async (req, res) => {
+//     throw new ApiError(400, "This is a test Error");
+//   })
+// );
 
 export default app;
