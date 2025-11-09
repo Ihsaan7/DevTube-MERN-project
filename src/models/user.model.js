@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import bcpt from "bcrypt";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 const userSchema = new mongoose.Schema(
@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
     fullName: {
       type: String,
       required: [true, "FullName is required in DB"],
-      time: true,
+      trim: true,
     },
     avatar: {
       type: String,
@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema(
     },
     coverImage: {
       type: String,
-      requried: [true, "Cover Image is required in DB"],
+      required: [true, "Cover Image is required in DB"],
     },
     watchHistory: {
       type: mongoose.Schema.Types.ObjectId,
@@ -48,20 +48,20 @@ const userSchema = new mongoose.Schema(
 );
 
 // HASHING PASS BEFORE SAVING IN DB
-userSchema.pre("save", async (next) => {
-  if (!isModified("password")) return next();
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
 
-  this.password = await bcpt.hash(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
 // COMPARING HASH PASS IN DB
-userSchema.method.isPassCorrect = async (password) => {
-  return await bcpt.compare(password, this.password);
+userSchema.methods.isPassCorrect = async function (password) {
+  return await bcrypt.compare(password, this.password);
 };
 
 // GENERATING ACCESS TOKEN ( JWT )
-userSchema.method.genAccessToken = () => {
+userSchema.methods.genAccessToken = function () {
   return jwt.sign(
     {
       _id: this._id,
@@ -77,7 +77,7 @@ userSchema.method.genAccessToken = () => {
 };
 
 // GENERATING REFRESH TOKEN ( JWT )
-userSchema.method.genRefreshToken = () => {
+userSchema.methods.genRefreshToken = function () {
   return jwt.sign(
     {
       _id: this._id,
@@ -89,4 +89,5 @@ userSchema.method.genRefreshToken = () => {
   );
 };
 
-export const user = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+export default User;
