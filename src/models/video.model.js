@@ -26,10 +26,12 @@ const videoSchema = new mongoose.Schema(
     view: {
       type: Number,
       required: true,
+      default: 0,
     },
     isPublished: {
       type: Boolean,
       required: [true, "Publish Value required in DB"],
+      default: true,
     },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
@@ -41,4 +43,5 @@ const videoSchema = new mongoose.Schema(
 
 videoSchema.plugin(mongooseAggregatePaginate);
 
-export const video = mongoose.model("Vidoe", videoSchema);
+const Video = mongoose.model("Video", videoSchema);
+export default Video;
