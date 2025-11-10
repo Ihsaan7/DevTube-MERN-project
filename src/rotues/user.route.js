@@ -8,6 +8,7 @@ import {
   updateDetails,
   userProfile,
   updateAvatar,
+  updateCoverImage,
 } from "../controllers/user.controller.js";
 import { uploadMulter } from "../middlewares/multer.mware.js";
 import verifyJWT from "../middlewares/auth.mware.js";
@@ -45,5 +46,9 @@ router.route("/profile").get(verifyJWT, userProfile);
 router
   .route("/update-avatar")
   .patch(verifyJWT, uploadMulter.single("avatar"), updateAvatar);
+
+router
+  .route("/update-coverImage")
+  .patch(verifyJWT, uploadMulter.single("coverImage"), updateCoverImage);
 
 export default router;
