@@ -5,6 +5,7 @@ import asyncHandler from "./utils/asyncHandler.js";
 import ApiError from "./utils/apiError.js";
 import userRouter from "./rotues/user.route.js";
 import videoRouter from "./rotues/video.route.js";
+import commentRouter from "./rotues/comment.route.js";
 
 const app = express();
 
@@ -23,10 +24,15 @@ app.use(cookieParser());
 //   })
 // );
 
-// User routes
+// User Route
 app.use("/api/v1/users", userRouter);
 
+// Video Route
 app.use("/api/v1/videos", videoRouter);
+
+// Comments Route
+app.use("/api/v1/comments", commentRouter);
+
 //404 Handler (must be after all routes)
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });
