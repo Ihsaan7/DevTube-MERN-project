@@ -43,5 +43,10 @@ const videoSchema = new mongoose.Schema(
 
 videoSchema.plugin(mongooseAggregatePaginate);
 
+// Indexes for better query performance
+videoSchema.index({ owner: 1, createdAt: -1 }); // Channel videos sorted by date
+videoSchema.index({ isPublished: 1, createdAt: -1 }); // Published videos sorted by date
+videoSchema.index({ title: "text", description: "text" }); // Text search
+
 const Video = mongoose.model("Video", videoSchema);
 export default Video;
