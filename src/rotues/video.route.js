@@ -2,7 +2,9 @@ import Router from "express";
 import { uploadMulter } from "../middlewares/multer.mware.js";
 import verifyJWT from "../middlewares/auth.mware.js";
 import {
+  getAllVideo,
   getVideo,
+  removeVideo,
   updateContent,
   updatePublish,
   updateVideo,
@@ -10,6 +12,9 @@ import {
 } from "../controllers/video.controller.js";
 
 const router = Router();
+
+// Public route (no JWT required)
+router.route("/").get(getAllVideo);
 
 // All routes below are automatically protected
 router.use(verifyJWT);
@@ -39,4 +44,7 @@ router
 router
   .route("/update-video/:videoID")
   .patch(uploadMulter.single("videoFile"), updateVideo);
+
+router.route("/remove-video/:videoID").delete(removeVideo);
+
 export default router;

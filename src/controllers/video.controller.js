@@ -2,6 +2,9 @@ import asyncHandler from "../utils/asyncHandler.js";
 import ApiError from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
 import Video from "../models/video.model.js";
+import Comment from "../models/comment.model.js";
+import Like from "../models/like.model.js";
+import Playlist from "../models/playlist.model.js";
 import { uploadCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
 import mongoose from "mongoose";
 import User from "../models/user.model.js";
@@ -280,4 +283,188 @@ const updateVideo = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, video, "Video has been updated Succesfully"));
 });
 
-export { uploadVideo, getVideo, updatePublish, updateContent, updateVideo };
+const removeVideo = asyncHandler(async (req, res) => {
+  // Get Params
+  const { videoID } = req.params;
+  if (!videoID || !mongoose.isValidObjectId(videoID)) {
+    throw new ApiError(400, "Video ID is missing or invalid!");
+  }
+
+  // Fetch video
+  const video = await Video.findById(videoID);
+  if (!video) {
+    throw new ApiError(404, "Video not found!");
+  }
+
+  // Check for owner
+  if (video.owner.toString() !== req.user?._id.toString()) {
+    throw new ApiError(403, "You cannot Delete this video!");
+  }
+
+  // Delete from Cloudinary (log errors but don't block)
+  const videoPublicId = video.videoFile.split("/").pop().split(".")[0];
+  const thumbnailPublicId = video.thumbnail.split("/").pop().split(".")[0];
+
+  try {
+    await deleteFromCloudinary(videoPublicId);
+    await deleteFromCloudinary(thumbnailPublicId);
+  } catch (error) {
+    console.log("Cloudinary deletion failed:", error.message);
+    // Continue with DB deletion even if Cloudinary fails
+  }
+
+  // Delete from DB
+  await Video.findByIdAndDelete(videoID);
+
+  // Delete Related Data .Comments , Likes , Playlist
+  await Comment.deleteMany({ video: videoID });
+  await Like.deleteMany({ video: videoID });
+  await Playlist.updateMany(
+    { videos: videoID },
+    { $pull: { videos: videoID } }
+  );
+  await User.updateMany(
+    { watchHistory: videoID },
+    { $pull: { watchHistory: videoID } }
+  );
+
+  // Return response
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Video Deleted Successfully"));
+});
+
+const getAllVideo = asyncHandler(async (req, res) => {
+  // Get Query
+  const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
+
+  // Validate Params
+  const pageNumber = parseInt(page) || 1;
+  const limitNumber = parseInt(limit) || 10;
+  const skip = (page - 1) * limit;
+
+  // Get PublishedVideos only
+  const pipeline = [];
+  pipeline.push({
+    $match: {
+      isPublished: true,
+    },
+  });
+
+  // Show Channel Videos
+  if (userId) {
+    if (!mongoose.isValidObjectId(userId)) {
+      throw new ApiError(400, "Invalid userID!");
+    }
+  }
+  pipeline.push({
+    $match: { owner: new mongoose.Types.ObjectId(userId) },
+  });
+
+  // Show Query Videos
+  if (query) {
+    pipeline.push({
+      $match: {
+        $or: [
+          { title: { $regex: query, $options: "i" } },
+          { description: { $regex: query, $options: "i" } },
+        ],
+      },
+    });
+  }
+
+  // Get Video Owners details
+  pipeline.push({
+    $lookup: {
+      from: "users",
+      localField: "owner",
+      foreignField: "_id",
+      as: "owner",
+      pipeline: [
+        {
+          $project: {
+            fullName: 1,
+            username: 1,
+            avatar: 1,
+          },
+        },
+      ],
+    },
+  });
+  pipeline.push({
+    $addFields: {
+      owner: { $first: "$owner" },
+    },
+  });
+
+  // Validate for avoiding sensitive fields
+  const allowedSortFields = ["createdAt", "views", "title", "duration"];
+  if (sortBy && !allowedSortFields.includes(sortBy)) {
+    throw new ApiError(400, "Invalid sort field");
+  }
+
+  // Get Sorted Videos
+  if (sortBy && sortType) {
+    const sortOrder = sortType === "asc" ? 1 : -1;
+    pipeline.push({
+      $sort: {
+        [sortBy]: sortOrder,
+      },
+    });
+  } else {
+    pipeline.push({
+      $sort: { createdAt: -1 },
+    });
+  }
+
+  // Project Fields
+  pipeline.push({
+    $project: {
+      title: 1,
+      description: 1,
+      thumbnail: 1,
+      duration: 1,
+      view: 1,
+      createdAt: 1,
+      owner: 1,
+    },
+  });
+
+  // Pagination
+  pipeline.push({ $skip: skip });
+  pipeline.push({ $limit: limitNumber });
+
+  // Execute aggregation
+  const videos = await Video.aggregate(pipeline);
+
+  // Get total count
+  const totalVideos = await Video.countDocuments({
+    isPublished: true,
+    ...(userId && { owner: new mongoose.Types.ObjectId(userId) }),
+  });
+
+  // Return response
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        videos,
+        page: pageNumber,
+        limit: limitNumber,
+        totalPages: Math.ceil(totalVideos / limitNumber),
+        totalVideos,
+      },
+      "Videos fetched successfully"
+    )
+  );
+});
+
+export {
+  uploadVideo,
+  getVideo,
+  updatePublish,
+  updateContent,
+  updateVideo,
+  removeVideo,
+  getAllVideo,
+};
