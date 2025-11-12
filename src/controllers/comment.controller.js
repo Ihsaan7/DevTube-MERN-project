@@ -2,6 +2,7 @@ import ApiError from "../utils/apiError.js";
 import ApiResponse from "../utils/apiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import Comment from "../models/comment.model.js";
+import Like from "../models/like.model.js";
 import mongoose from "mongoose";
 import Video from "../models/video.model.js";
 
@@ -219,4 +220,38 @@ const updateComment = asyncHandler(async (req, res) => {
       new ApiResponse(200, updatedComment[0], "Comment Updated Successfully")
     );
 });
-export { addComment, getAllComment, updateComment };
+
+const removeComment = asyncHandler(async (req, res) => {
+  // Get params
+  const { commentID } = req.params;
+  if (!commentID || !mongoose.isValidObjectId(commentID)) {
+    throw new ApiError(400, "Invalid Comment ID!");
+  }
+
+  // Fetch Comment
+  const comment = await Comment.findById(commentID);
+  if (!comment) {
+    throw new ApiError(404, "No comment found!");
+  }
+
+  // Check for who can delete
+  const video = await Video.findById(comment.video);
+  if (!video) {
+    throw new ApiError(404, "No video found!");
+  }
+  const commentOwner = comment.owner.toString() === req.user?._id.toString();
+  const videoOwner = video.owner.toString() === req.user?._id.toString();
+  if (!commentOwner && !videoOwner) {
+    throw new ApiError(403, "You cannot delete the Comment!");
+  }
+
+  // Delete comment and its data
+  await Like.deleteMany({ comment: commentID });
+  await Comment.findByIdAndDelete(commentID);
+
+  // Return res
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Comment Deleted Successfully"));
+});
+export { addComment, getAllComment, updateComment, removeComment };
