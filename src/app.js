@@ -1,11 +1,10 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import asyncHandler from "./utils/asyncHandler.js";
-import ApiError from "./utils/apiError.js";
 import userRouter from "./rotues/user.route.js";
 import videoRouter from "./rotues/video.route.js";
 import commentRouter from "./rotues/comment.route.js";
+import likeRouter from "./rotues/like.route.js";
 
 const app = express();
 
@@ -32,6 +31,9 @@ app.use("/api/v1/videos", videoRouter);
 
 // Comments Route
 app.use("/api/v1/comments", commentRouter);
+
+// Like Route
+app.use("/api/v1/likes", likeRouter);
 
 //404 Handler (must be after all routes)
 app.use((req, res) => {
