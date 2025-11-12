@@ -156,4 +156,67 @@ const getAllComment = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, result, "Comments Fetched Successfully"));
 });
 
-export { addComment, getAllComment };
+const updateComment = asyncHandler(async (req, res) => {
+  // Get params
+  const { commentID } = req.params;
+  if (!commentID || !mongoose.isValidObjectId(commentID)) {
+    throw new ApiError(400, "Invalid Comment ID!");
+  }
+  // Get Data
+  const { content } = req.body;
+  if (!content || content.trim() === "") {
+    throw new ApiError(400, "Content is missing!");
+  }
+  if (content.trim().length > 500) {
+    throw new ApiError(400, "Comment length must be less than 500 characters!");
+  }
+
+  // Fetch the Comment
+  const comment = await Comment.findById(commentID);
+  if (!comment) {
+    throw new ApiError(404, "Cannot Find the Comment!");
+  }
+
+  // Check for owner
+  if (comment.owner.toString() !== req.user?._id.toString()) {
+    throw new ApiError(403, "You cannot edit the comment!");
+  }
+
+  // Save the new Comment
+  comment.content = content.trim();
+  await comment.save();
+
+  // Fetch the Comment with owner
+  const updatedComment = await Comment.aggregate([
+    {
+      $match: { _id: new mongoose.Types.ObjectId(commentID) },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "owner",
+        pipeline: [
+          {
+            $project: {
+              fullName: 1,
+              username: 1,
+              avatar: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: { owner: { $first: "$owner" } },
+    },
+  ]);
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, updatedComment[0], "Comment Updated Successfully")
+    );
+});
+export { addComment, getAllComment, updateComment };
