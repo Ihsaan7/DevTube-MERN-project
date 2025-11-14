@@ -4,6 +4,7 @@ import ApiResponse from "../utils/apiResponse.js";
 import mongoose from "mongoose";
 import Playlist from "../models/playlist.model.js";
 import User from "../models/user.model.js";
+import Video from "../models/video.model.js";
 
 const createPlaylist = asyncHandler(async (req, res) => {
   // Get data
@@ -240,4 +241,217 @@ const getSinglePlaylist = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, playlistData, "Playlist fetched successfully"));
 });
 
-export { createPlaylist, getUserPlaylist, getSinglePlaylist };
+const addVideoToPlaylist = asyncHandler(async (req, res) => {
+  // Get params
+  const { playlistID, videoID } = req.params;
+  if (!playlistID || !mongoose.isValidObjectId(playlistID)) {
+    throw new ApiError(400, "Invalid Playlist ID!");
+  }
+  if (!videoID || !mongoose.isValidObjectId(videoID)) {
+    throw new ApiError(400, "Invalid Video ID!");
+  }
+
+  // Check for playlist
+  const playlist = await Playlist.findById(playlistID);
+  if (!playlist) {
+    throw new ApiError(404, "No playlist found!");
+  }
+
+  // Check for owner
+  if (playlist.owner.toString() !== req.user?._id.toString()) {
+    throw new ApiError(403, "Only owner can add video to this playlist!");
+  }
+
+  // Check for video
+  const video = await Video.findById(videoID);
+  if (!video) {
+    throw new ApiError(404, "No video found!");
+  }
+
+  // Check for publish
+  if (!video.isPublished) {
+    throw new ApiError(400, "Cannot add unpublished video to playlist");
+  }
+
+  // Check if video already in playlist
+  if (playlist.videos.includes(videoID)) {
+    throw new ApiError(400, "Video already exists in current playlist!");
+  }
+
+  // Add video to playlist
+  playlist.videos.push(videoID);
+  await playlist.save();
+
+  // Return full playlist
+  const updatedPlaylist = await Playlist.findById(playlistID).populate(
+    "videos",
+    "title thumbnail duration"
+  );
+
+  // Return res
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        updatedPlaylist,
+        "Video added to playlist Successfully"
+      )
+    );
+});
+
+const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
+  // Get params
+  const { playlistID, videoID } = req.params;
+  if (!playlistID || !mongoose.isValidObjectId(playlistID)) {
+    throw new ApiError(400, "Invalid Playlist ID!");
+  }
+  if (!videoID || !mongoose.isValidObjectId(videoID)) {
+    throw new ApiError(400, "Invalid Video ID!");
+  }
+
+  // Check for Playlist and Video
+  const playlist = await Playlist.findById(playlistID);
+  const video = await Video.findById(videoID);
+  if (!playlist) {
+    throw new ApiError(404, "No Playlist found!");
+  }
+  if (!video) {
+    throw new ApiError(404, "No Video found!");
+  }
+
+  // Check for owner
+  if (playlist.owner.toString() !== req.user?._id.toString()) {
+    throw new ApiError(403, "Only owner can remove video from playlist!");
+  }
+
+  // Check for video in Playlist
+  if (!playlist.videos.includes(videoID)) {
+    throw new ApiError(400, "No such video exists in Playlist!");
+  }
+
+  // Remove the video
+  const updatedPlaylist = await Playlist.findByIdAndUpdate(
+    playlistID,
+    {
+      $pull: { videos: videoID },
+    },
+    {
+      new: true,
+    }
+  );
+
+  // Return res
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        updatedPlaylist,
+        "Video removed from playlist Successfully"
+      )
+    );
+});
+
+const updatePlaylist = asyncHandler(async (req, res) => {
+  // Get params and Data
+  const { playlistID } = req.params;
+  const { name, description, isPublic } = req.body;
+  if (!playlistID || !mongoose.isValidObjectId(playlistID)) {
+    throw new ApiError(400, "Invalid Playlist ID!");
+  }
+  // Validataion
+  if (!name && !description && isPublic === undefined) {
+    throw new ApiError(400, "Both fields are required!");
+  }
+  if (name !== undefined) {
+    if (name.trim() === "") {
+      throw new ApiError(400, "Playlist name cannot be empty");
+    }
+
+    if (name.trim().length > 100) {
+      throw new ApiError(400, "Playlist name too long (max 100 chars)");
+    }
+  }
+
+  if (description !== undefined) {
+    if (description.trim() === "") {
+      throw new ApiError(400, "Description cannot be empty");
+    }
+
+    if (description.trim().length > 500) {
+      throw new ApiError(400, "Description too long (max 500 chars)");
+    }
+  }
+
+  if (isPublic !== undefined && typeof isPublic !== "boolean") {
+    throw new ApiError(400, "isPublic must be a boolean");
+  }
+
+  // Check for Playlist
+  const playlist = await Playlist.findById(playlistID);
+  if (!playlist) {
+    throw new ApiError(404, " No playlist found!");
+  }
+
+  // Check for owner
+  if (playlist.owner.toString() !== req.user?._id.toString()) {
+    throw new ApiError(403, "Only owner can update playlist!");
+  }
+
+  // Update Playlist
+  const updateFields = {};
+
+  if (name) updateFields.name = name.trim();
+  if (description) updateFields.description = description.trim();
+  if (isPublic !== undefined) updateFields.isPublic = isPublic;
+
+  const updatedPlaylist = await Playlist.findByIdAndUpdate(
+    playlistID,
+    { $set: updateFields },
+    { new: true, runValidators: true }
+  );
+
+  // Return res
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, updatedPlaylist, "Playlist updated Successfully")
+    );
+});
+
+const removePlaylist = asyncHandler(async (req, res) => {
+  // Get params
+  const { playlistID } = req.params;
+  if (!playlistID || !mongoose.isValidObjectId(playlistID)) {
+    throw new ApiError(400, "Invalid Playlist ID!");
+  }
+
+  // Check for Playlist
+  const playlist = await Playlist.findById(playlistID);
+  if (!playlist) {
+    throw new ApiError(404, "No playlist found!");
+  }
+
+  // Check for owner
+  if (playlist.owner.toString() !== req.user?._id.toString()) {
+    throw new ApiError(403, "Only onwer can delete playlist!");
+  }
+
+  // Delete playlist
+  await Playlist.findByIdAndDelete(playlist);
+
+  // Return res
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Playlist deleted Successfully"));
+});
+export {
+  createPlaylist,
+  getUserPlaylist,
+  getSinglePlaylist,
+  addVideoToPlaylist,
+  removeVideoFromPlaylist,
+  updatePlaylist,
+  removePlaylist,
+};
