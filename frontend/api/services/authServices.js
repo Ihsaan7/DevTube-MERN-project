@@ -32,12 +32,12 @@ export const register = async (userData) => {
 };
 
 // ==================== LOGIN ====================
-export const login = async (credientials) => {
+export const login = async (credentials) => {
   try {
-    const response = await apiClient.post("/users/login", credientials);
+    const response = await apiClient.post("/users/login", credentials);
 
-    localStorage.setItem("accessToken", response.data.accessToken);
-    localStorage.setItem("user", JSON.stringify(response.data.user));
+    localStorage.setItem("accessToken", response.data.data.accessToken);
+    localStorage.setItem("user", JSON.stringify(response.data.data.user));
 
     return response.data;
   } catch (err) {
