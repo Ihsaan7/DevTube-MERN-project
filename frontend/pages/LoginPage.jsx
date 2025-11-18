@@ -8,7 +8,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false); // Consistent naming
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   // Hooks
@@ -17,7 +17,7 @@ const LoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Clear previous errors
+    setError("");
 
     // Validation
     if (!email || !password || !username) {
@@ -31,11 +31,6 @@ const LoginPage = () => {
       return;
     }
 
-    // if (password.length < 6) {
-    //   setError("Password must be at least 6 characters long!");
-    //   return;
-    // }
-
     // API Call with try-catch
     setLoading(true);
 
@@ -43,8 +38,8 @@ const LoginPage = () => {
       const response = await login({ email, password, username }); // await the promise
 
       if (response && response.data) {
-        handleLogin(response.data.user); // Pass user data to context
-        navigate("/home"); // Redirect to home after successful login
+        handleLogin(response.data.user);
+        navigate("/home");
       }
     } catch (err) {
       // Handle API errors
