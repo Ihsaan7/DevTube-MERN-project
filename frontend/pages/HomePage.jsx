@@ -21,9 +21,11 @@ const HomePage = () => {
     try {
       setLoading(true);
       const response = await getAllVideos({ page: 1, limit: 20 });
-
+      setVideos(response.data.videos || []);
+      setError("");
+    } catch (error) {
       setError("Failed to load videos");
-      console.error("Error fetching videos:", err);
+      console.error("Error fetching videos:", error);
     } finally {
       setLoading(false);
     }

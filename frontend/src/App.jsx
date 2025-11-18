@@ -4,6 +4,7 @@ import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import HomePage from "../pages/HomePage";
 import UploadVideoPage from "../pages/UploadVideoPage";
+import VideoPlayerPage from "../pages/VideoPlayerPage";
 import ProtectedRoute from "../components/ProtectedRoutes";
 
 function App() {
@@ -31,6 +32,16 @@ function App() {
         element={
           <ProtectedRoute>
             <UploadVideoPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Protected Route - Video Player */}
+      <Route
+        path="/video/:videoId"
+        element={
+          <ProtectedRoute>
+            <VideoPlayerPage />
           </ProtectedRoute>
         }
       />
