@@ -35,7 +35,7 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      const response = await login({ email, password, username }); // await the promise
+      const response = await login({ email, password, username });
 
       if (response && response.user) {
         handleLogin(response.user);

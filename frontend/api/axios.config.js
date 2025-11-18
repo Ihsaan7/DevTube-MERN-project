@@ -12,8 +12,6 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
-    console.log("Request: ", config.method, config.url);
     return config;
   },
   (error) => {
@@ -48,7 +46,6 @@ apiClient.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
-    console.log("Response Error: ", error.message);
     return Promise.reject(error);
   }
 );

@@ -36,16 +36,14 @@ export const login = async (credentials) => {
   try {
     const response = await apiClient.post("/users/login", credentials);
 
-    // Axios interceptor already unwrapped response.data
-    // So response = { user, accessToken, refreshToken }
-    const { user, accessToken, refreshToken } = response;
+    // Response structure: { statusCode, data: { user, accessToken, refreshToken }, message, success }
+    const { user, accessToken, refreshToken } = response.data;
 
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("user", JSON.stringify(user));
 
-    return response;
+    return response.data;
   } catch (err) {
-    console.log("Login Error: ", err);
     throw err;
   }
 };
