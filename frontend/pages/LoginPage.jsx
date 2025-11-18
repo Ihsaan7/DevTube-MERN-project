@@ -5,8 +5,7 @@ import { login } from "../api/services/authServices";
 
 const LoginPage = () => {
   // States
-  const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
+  const [emailOrUsername, setEmailOrUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -20,22 +19,30 @@ const LoginPage = () => {
     setError("");
 
     // Validation
-    if (!email || !password || !username) {
-      setError("All three fields are required!");
+    if (!emailOrUsername || !password) {
+      setError("Email/Username and Password are required!");
       return;
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError("Please enter a valid email address");
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long!");
       return;
     }
+
+    // Determine if input is email or username
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isEmail = emailRegex.test(emailOrUsername);
+
+    const credentials = {
+      password,
+      ...(isEmail ? { email: emailOrUsername } : { username: emailOrUsername }),
+    };
 
     // API Call with try-catch
     setLoading(true);
 
     try {
-      const response = await login({ email, password, username });
+      const response = await login(credentials);
 
       if (response && response.user) {
         handleLogin(response.user);
@@ -67,38 +74,20 @@ const LoginPage = () => {
 
         {/* Login Form */}
         <form onSubmit={handleSubmit}>
-          {/* Email Input */}
+          {/* Email or Username Input */}
           <div className="mb-4">
             <label
-              htmlFor="email"
+              htmlFor="emailOrUsername"
               className="block text-gray-700 font-medium mb-2"
             >
-              Email
+              Email or Username
             </label>
             <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              disabled={loading}
-            />
-          </div>
-
-          <div className="mb-4">
-            <label
-              htmlFor="username"
-              className="block text-gray-700 font-medium mb-2"
-            >
-              Username
-            </label>
-            <input
-              type="username"
-              id="username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your Username"
+              type="text"
+              id="emailOrUsername"
+              value={emailOrUsername}
+              onChange={(e) => setEmailOrUsername(e.target.value)}
+              placeholder="Enter your email or username"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}
             />
