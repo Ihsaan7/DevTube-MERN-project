@@ -3,30 +3,28 @@ import apiClient from "../axios.config";
 // ==================== REGISTER ====================
 export const register = async (userData) => {
   try {
-    const fromData = new FormData();
+    const formData = new FormData();
 
-    fromData.append("username", userData.username);
-    fromData.append("email", userData.email);
-    fromData.append("password", userData.password);
-    fromData.append("fullName", userData.fullName);
+    formData.append("username", userData.username);
+    formData.append("email", userData.email);
+    formData.append("password", userData.password);
+    formData.append("fullName", userData.fullName);
 
     if (userData.avatar) {
-      fromData.append("avatar", userData.avatar);
+      formData.append("avatar", userData.avatar);
     }
     if (userData.coverImage) {
-      fromData.append("coverImage", userData.coverImage);
+      formData.append("coverImage", userData.coverImage);
     }
 
-    const response = await apiClient.post("/users/signup", FormData, {
-      header: { "Content-Type": "multipart/from-data" },
+    const response = await apiClient.post("/users/signup", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
     });
 
-    localStorage.setItem("accessToken", response.data.accessToken);
-    localStorage.setItem("user", JSON.stringify(response.data.user));
-
-    return response.data;
+    // Response from backend: just the user object (no tokens)
+    // Axios interceptor unwraps response.data, so response = createdUser
+    return response;
   } catch (err) {
-    console.log("Register Error:", err);
     throw err;
   }
 };
