@@ -269,15 +269,30 @@ const HomePage = () => {
             )}
 
             {loading ? (
-              <div className="text-center py-12">
-                <div className="inline-block animate-spin h-12 w-12 border-4 border-orange-500 border-t-transparent"></div>
-                <p
-                  className={`mt-4 ${
-                    isDark ? "text-neutral-400" : "text-neutral-600"
-                  }`}
-                >
-                  Loading videos...
-                </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 auto-rows-fr py-12">
+                {[...Array(8)].map((_, idx) => (
+                  <div
+                    key={idx}
+                    className={`border overflow-hidden animate-pulse transition-all duration-200 rounded-lg ${
+                      isDark
+                        ? "bg-neutral-900 border-neutral-800"
+                        : "bg-white border-neutral-200"
+                    }`}
+                  >
+                    <div className="relative w-full h-48 bg-neutral-800 dark:bg-neutral-700" />
+                    <div className="p-4">
+                      <div className="h-5 w-3/4 bg-neutral-700 dark:bg-neutral-600 rounded mb-3" />
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-8 h-8 rounded-full bg-neutral-700 dark:bg-neutral-600" />
+                        <div className="h-4 w-1/2 bg-neutral-700 dark:bg-neutral-600 rounded" />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="h-3 w-12 bg-neutral-700 dark:bg-neutral-600 rounded" />
+                        <div className="h-3 w-6 bg-neutral-700 dark:bg-neutral-600 rounded" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : videos.length === 0 ? (
               <div
@@ -328,10 +343,10 @@ const HomePage = () => {
                 {videos.map((video) => (
                   <div
                     key={video._id}
-                    className={`border overflow-hidden transition-all duration-200 cursor-pointer group ${
+                    className={`border overflow-hidden transition-all duration-300 cursor-pointer group rounded-lg ${
                       isDark
-                        ? "bg-neutral-900 border-neutral-800 hover:border-neutral-700"
-                        : "bg-white border-neutral-200 hover:border-neutral-300 shadow-md hover:shadow-xl"
+                        ? "bg-neutral-900 border-neutral-800 hover:border-orange-500"
+                        : "bg-white border-neutral-200 hover:border-orange-500 shadow-md hover:shadow-xl"
                     }`}
                     onClick={() => navigate(`/video/${video._id}`)}
                   >
@@ -342,7 +357,7 @@ const HomePage = () => {
                         alt={video.title}
                         className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
                       />
-                      <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 font-medium">
+                      <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 font-medium rounded">
                         {formatDuration(video.duration)}
                       </div>
                     </div>
@@ -365,7 +380,7 @@ const HomePage = () => {
                             "https://via.placeholder.com/32"
                           }
                           alt={video.owner?.username}
-                          className="w-8 h-8 rounded-full object-cover"
+                          className="w-8 h-8 rounded-full object-cover border border-neutral-300 dark:border-neutral-700"
                         />
                         <p
                           className={`text-sm font-medium ${
@@ -378,7 +393,7 @@ const HomePage = () => {
 
                       {/* Stats */}
                       <div
-                        className={`flex items-center gap-2 text-xs font-medium ${
+                        className={`flex flex-wrap items-center gap-2 text-xs font-medium ${
                           isDark ? "text-neutral-500" : "text-neutral-500"
                         }`}
                       >
