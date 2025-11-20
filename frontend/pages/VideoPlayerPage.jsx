@@ -56,8 +56,33 @@ const VideoPlayerPage = () => {
     fetchVideo();
     fetchComments();
     setHasIncrementedView(false); // Reset on video change
-  }, [videoId]);
+    // Fetch subscription state
+    if (user && videoId) {
+      fetchSubscriptionState();
+    }
+  }, [videoId, user]);
 
+  const fetchSubscriptionState = async () => {
+    try {
+      // video.owner?._id is not available until video is loaded, so fetch after video
+      const videoData = await getVideo(videoId);
+      const ownerId =
+        videoData.data?.video?.owner?._id || videoData.data?.owner?._id;
+      if (!ownerId || user?._id === ownerId) {
+        setIsSubscribed(false);
+        return;
+      }
+      // Get all channels the user is subscribed to
+      const subRes = await import("../api/services/subscription.services");
+      const response = await subRes.getMySubscriptions();
+      // response.data.docs is an array of channels
+      const docs = response.data?.docs || [];
+      const isSubbed = docs.some((item) => item.channel?._id === ownerId);
+      setIsSubscribed(isSubbed);
+    } catch (err) {
+      setIsSubscribed(false);
+    }
+  };
   // Fetch related videos after video is loaded for better sorting
   useEffect(() => {
     if (video) {
@@ -693,13 +718,21 @@ const VideoPlayerPage = () => {
                     }`}
                   >
                     {isSubscribed && (
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     )}
                     {isSubscribed ? "Subscribed" : "Subscribe"}
                   </button>
-                  
+
                   {/* Confetti Animation */}
                   {showConfetti && (
                     <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -708,11 +741,18 @@ const VideoPlayerPage = () => {
                           key={i}
                           className="absolute w-2 h-2 animate-confetti"
                           style={{
-                            left: '50%',
-                            top: '50%',
-                            backgroundColor: ['#f97316', '#fb923c', '#fdba74', '#fed7aa'][i % 4],
+                            left: "50%",
+                            top: "50%",
+                            backgroundColor: [
+                              "#f97316",
+                              "#fb923c",
+                              "#fdba74",
+                              "#fed7aa",
+                            ][i % 4],
                             animationDelay: `${i * 50}ms`,
-                            transform: `rotate(${i * 18}deg) translateY(-${20 + i * 5}px)`,
+                            transform: `rotate(${i * 18}deg) translateY(-${
+                              20 + i * 5
+                            }px)`,
                             opacity: 0,
                           }}
                         />
