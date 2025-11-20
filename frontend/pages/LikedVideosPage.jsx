@@ -83,62 +83,64 @@ const LikedVideosPage = () => {
   };
 
   if (loading) {
-      // Responsive skeleton grid loader
-      return (
-        <Layout>
-          <div className="max-w-[1800px] mx-auto p-6">
-            <div className="flex items-center justify-between mb-8">
-              <h3
-                className={`text-3xl font-bold tracking-tight ${
-                  isDark ? "text-white" : "text-neutral-900"
-                }`}
-              >
-                Liked Videos
-              </h3>
-              <div
-                className={`px-4 py-2 border font-semibold ${
-                  isDark
-                    ? "border-neutral-700 text-neutral-300"
-                    : "border-neutral-300 text-neutral-700"
-                }`}
-              >
-                Loading...
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 auto-rows-fr">
-              {[...Array(8)].map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`border overflow-hidden transition-all duration-200 animate-pulse ${
-                    isDark
-                      ? "bg-neutral-900 border-neutral-800"
-                      : "bg-white border-neutral-200 shadow-md"
-                  }`}
-                >
-                  {/* Thumbnail skeleton */}
-                  <div className="relative overflow-hidden">
-                    <div className="w-full h-48 bg-neutral-700/30 dark:bg-neutral-800/60" />
-                    <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded w-12 h-5" />
-                  </div>
-                  {/* Info skeleton */}
-                  <div className="p-4">
-                    <div className={`h-5 w-3/4 mb-3 rounded bg-neutral-300/40 dark:bg-neutral-700/60`} />
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-8 h-8 rounded-full bg-neutral-300/40 dark:bg-neutral-700/60" />
-                      <div className="h-4 w-1/3 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="h-3 w-12 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
-                      <div className="h-3 w-3 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
-                      <div className="h-3 w-16 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
-                    </div>
-                  </div>
-                </div>
-              ))}
+    // Responsive skeleton grid loader
+    return (
+      <Layout>
+        <div className="max-w-[1800px] mx-auto p-6">
+          <div className="flex items-center justify-between mb-8">
+            <h3
+              className={`text-3xl font-bold tracking-tight ${
+                isDark ? "text-white" : "text-neutral-900"
+              }`}
+            >
+              Liked Videos
+            </h3>
+            <div
+              className={`px-4 py-2 border font-semibold ${
+                isDark
+                  ? "border-neutral-700 text-neutral-300"
+                  : "border-neutral-300 text-neutral-700"
+              }`}
+            >
+              Loading...
             </div>
           </div>
-        </Layout>
-      );
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 auto-rows-fr">
+            {[...Array(8)].map((_, idx) => (
+              <div
+                key={idx}
+                className={`border overflow-hidden transition-all duration-200 animate-pulse ${
+                  isDark
+                    ? "bg-neutral-900 border-neutral-800"
+                    : "bg-white border-neutral-200 shadow-md"
+                }`}
+              >
+                {/* Thumbnail skeleton */}
+                <div className="relative overflow-hidden">
+                  <div className="w-full h-48 bg-neutral-700/30 dark:bg-neutral-800/60" />
+                  <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded w-12 h-5" />
+                </div>
+                {/* Info skeleton */}
+                <div className="p-4">
+                  <div
+                    className={`h-5 w-3/4 mb-3 rounded bg-neutral-300/40 dark:bg-neutral-700/60`}
+                  />
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 rounded-full bg-neutral-300/40 dark:bg-neutral-700/60" />
+                    <div className="h-4 w-1/3 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-3 w-12 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                    <div className="h-3 w-3 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                    <div className="h-3 w-16 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Layout>
+    );
   }
 
   if (error) {
@@ -417,7 +419,7 @@ const LikedVideosPage = () => {
                         ? "bg-neutral-900 border-neutral-800 hover:border-neutral-700"
                         : "bg-white border-neutral-200 hover:border-neutral-300 shadow-md hover:shadow-xl"
                     }`}
-                    style={{ willChange: 'transform, box-shadow' }}
+                    style={{ willChange: "transform, box-shadow" }}
                   >
                     {/* Thumbnail */}
                     <div className="relative overflow-hidden">
