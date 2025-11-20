@@ -11,6 +11,8 @@ import SubscriptionsPage from "../pages/SubscriptionsPage";
 import WatchHistoryPage from "../pages/WatchHistoryPage";
 import LikedVideosPage from "../pages/LikedVideosPage";
 import SettingsPage from "../pages/SettingsPage";
+import PlaylistsPage from "../pages/PlaylistsPage";
+import PlaylistDetailPage from "../pages/PlaylistDetailPage";
 import ProtectedRoute from "../components/ProtectedRoutes";
 
 function App() {
@@ -118,6 +120,26 @@ function App() {
         element={
           <ProtectedRoute>
             <SettingsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Protected Route - Playlists */}
+      <Route
+        path="/playlists"
+        element={
+          <ProtectedRoute>
+            <PlaylistsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Protected Route - Playlist Detail */}
+      <Route
+        path="/playlist/:playlistId"
+        element={
+          <ProtectedRoute>
+            <PlaylistDetailPage />
           </ProtectedRoute>
         }
       />
