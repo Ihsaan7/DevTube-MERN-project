@@ -58,6 +58,10 @@ const ChannelPage = () => {
         `/users/channel/${channelUsername}`
       );
       setChannelData(channelRes.data);
+      // Set initial subscription state if present in response
+      if (typeof channelRes.data.isSubscribed === "boolean") {
+        setIsSubscribed(channelRes.data.isSubscribed);
+      }
 
       // Only show unpublished videos if viewing own profile
       let videoParams = { userId: channelRes.data?._id, limit: 50 };
