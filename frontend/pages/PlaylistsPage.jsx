@@ -307,16 +307,16 @@ const PlaylistsPage = () => {
                 {playlists.map((playlist) => (
                   <div
                     key={playlist._id}
-                    className={`border overflow-hidden transition-all duration-300 cursor-pointer group rounded-lg ${
+                    className={`border-2 overflow-hidden transition-all duration-300 cursor-pointer group hover:border-orange-500 hover:shadow-orange-500/20 hover:shadow-xl ${
                       isDark
-                        ? "bg-neutral-900 border-neutral-800 hover:border-orange-500"
-                        : "bg-white border-neutral-200 hover:border-orange-500 shadow-md hover:shadow-xl"
+                        ? "bg-neutral-900 border-neutral-800"
+                        : "bg-white border-neutral-200 shadow-md"
                     }`}
                   >
                     {/* Thumbnail */}
                     <div
                       onClick={() => navigate(`/playlist/${playlist._id}`)}
-                      className="relative aspect-video bg-linear-to-br from-orange-500 to-orange-700 cursor-pointer group rounded-t-lg"
+                      className="relative aspect-video bg-gradient-to-br from-orange-500 to-orange-700 cursor-pointer group"
                     >
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="text-center text-white">

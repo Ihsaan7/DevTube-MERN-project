@@ -238,6 +238,322 @@ const UploadVideoPage = () => {
               Share your content with the world
             </p>
           </div>
+          {/* Upload Form */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            {/* Main Form */}
+            <div className="lg:col-span-2">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {error && (
+                  <div className={`p-4 border ${
+                    isDark
+                      ? "bg-red-950/20 border-red-900/50 text-red-400"
+                      : "bg-red-50 border-red-200 text-red-700"
+                  }`}>
+                    <p className="font-semibold text-sm">{error}</p>
+                  </div>
+                )}
+
+                {/* Video Details Section */}
+                <div className={`border p-6 ${
+                  isDark
+                    ? "bg-neutral-900 border-neutral-800"
+                    : "bg-white border-neutral-200 shadow-md"
+                }`}>
+                  <h2 className={`text-xl font-bold mb-6 ${
+                    isDark ? "text-white" : "text-neutral-900"
+                  }`}>Video Details</h2>
+
+                  <div className="space-y-6">
+                    <div>
+                      <label className={`block font-bold mb-2 text-sm ${
+                        isDark ? "text-neutral-300" : "text-neutral-700"
+                      }`}>Title *</label>
+                      <input
+                        type="text"
+                        name="title"
+                        value={formData.title}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 border font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 ${
+                          isDark
+                            ? "bg-neutral-950 border-neutral-800 text-white placeholder-neutral-600"
+                            : "bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400"
+                        }`}
+                        placeholder="Enter a descriptive title"
+                        maxLength={100}
+                        required
+                      />
+                      <p className={`text-xs mt-1 font-semibold ${
+                        isDark ? "text-neutral-500" : "text-neutral-500"
+                      }`}>{formData.title.length}/100 characters</p>
+                    </div>
+
+                    <div>
+                      <label className={`block font-bold mb-2 text-sm ${
+                        isDark ? "text-neutral-300" : "text-neutral-700"
+                      }`}>Description *</label>
+                      <textarea
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 border font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none ${
+                          isDark
+                            ? "bg-neutral-950 border-neutral-800 text-white placeholder-neutral-600"
+                            : "bg-white border-neutral-300 text-neutral-900 placeholder-neutral-400"
+                        }`}
+                        placeholder="Tell viewers about your video"
+                        rows={5}
+                        maxLength={500}
+                        required
+                      />
+                      <p className={`text-xs mt-1 font-semibold ${
+                        isDark ? "text-neutral-500" : "text-neutral-500"
+                      }`}>{formData.description.length}/500 characters</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Video File Section */}
+                <div className={`border p-6 ${
+                  isDark
+                    ? "bg-neutral-900 border-neutral-800"
+                    : "bg-white border-neutral-200 shadow-md"
+                }`}>
+                  <h2 className={`text-xl font-bold mb-6 ${
+                    isDark ? "text-white" : "text-neutral-900"
+                  }`}>Video File</h2>
+
+                  <div className={`border-2 border-dashed p-8 text-center transition-colors ${
+                    isDark
+                      ? "border-neutral-700 hover:border-orange-500"
+                      : "border-neutral-300 hover:border-orange-500"
+                  }`}>
+                    <svg
+                      className={`w-12 h-12 mx-auto mb-4 ${
+                        isDark ? "text-neutral-600" : "text-neutral-400"
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                      />
+                    </svg>
+                    <input
+                      type="file"
+                      accept="video/*"
+                      onChange={handleVideoChange}
+                      className="hidden"
+                      id="videoFile"
+                      required
+                    />
+                    <label
+                      htmlFor="videoFile"
+                      className="cursor-pointer"
+                    >
+                      <span className={`block font-bold mb-2 ${
+                        isDark ? "text-white" : "text-neutral-900"
+                      }`}>
+                        {videoFile ? videoFile.name : "Select video file"}
+                      </span>
+                      <span className={`text-sm font-semibold ${
+                        isDark ? "text-neutral-400" : "text-neutral-600"
+                      }`}>
+                        Click to browse or drag and drop
+                      </span>
+                    </label>
+                  </div>
+
+                  {videoPreview && (
+                    <div className="mt-6">
+                      <p className={`text-sm font-bold mb-3 ${
+                        isDark ? "text-neutral-300" : "text-neutral-700"
+                      }`}>Preview</p>
+                      <video
+                        src={videoPreview}
+                        controls
+                        className={`w-full border ${
+                          isDark ? "border-neutral-800 bg-black" : "border-neutral-300"
+                        }`}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                {/* Thumbnail Section */}
+                <div className={`border p-6 ${
+                  isDark
+                    ? "bg-neutral-900 border-neutral-800"
+                    : "bg-white border-neutral-200 shadow-md"
+                }`}>
+                  <h2 className={`text-xl font-bold mb-6 ${
+                    isDark ? "text-white" : "text-neutral-900"
+                  }`}>Thumbnail</h2>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className={`border-2 border-dashed p-6 text-center transition-colors ${
+                      isDark
+                        ? "border-neutral-700 hover:border-orange-500"
+                        : "border-neutral-300 hover:border-orange-500"
+                    }`}>
+                      <svg
+                        className={`w-10 h-10 mx-auto mb-3 ${
+                          isDark ? "text-neutral-600" : "text-neutral-400"
+                        }`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleThumbnailChange}
+                        className="hidden"
+                        id="thumbnail"
+                        required
+                      />
+                      <label
+                        htmlFor="thumbnail"
+                        className="cursor-pointer"
+                      >
+                        <span className={`block font-bold text-sm mb-1 ${
+                          isDark ? "text-white" : "text-neutral-900"
+                        }`}>
+                          Upload Thumbnail
+                        </span>
+                        <span className={`text-xs font-semibold ${
+                          isDark ? "text-neutral-400" : "text-neutral-600"
+                        }`}>
+                          JPG, PNG (16:9 ratio)
+                        </span>
+                      </label>
+                    </div>
+
+                    {thumbnailPreview && (
+                      <div>
+                        <p className={`text-sm font-bold mb-2 ${
+                          isDark ? "text-neutral-300" : "text-neutral-700"
+                        }`}>Preview</p>
+                        <img
+                          src={thumbnailPreview}
+                          alt="Thumbnail Preview"
+                          className={`w-full aspect-video object-cover border ${
+                            isDark ? "border-neutral-800" : "border-neutral-300"
+                          }`}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Upload Progress */}
+                {uploadProgress > 0 && uploadProgress < 100 && (
+                  <div className={`border p-6 ${
+                    isDark
+                      ? "bg-neutral-900 border-neutral-800"
+                      : "bg-white border-neutral-200 shadow-md"
+                  }`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className={`font-bold ${
+                        isDark ? "text-white" : "text-neutral-900"
+                      }`}>Uploading...</span>
+                      <span className={`font-bold text-orange-500`}>{uploadProgress}%</span>
+                    </div>
+                    <div className={`w-full h-3 overflow-hidden ${
+                      isDark ? "bg-neutral-800" : "bg-neutral-200"
+                    }`}>
+                      <div
+                        className="bg-orange-500 h-3 transition-all duration-300"
+                        style={{ width: `${uploadProgress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+              </form>
+            </div>
+
+            {/* Sidebar */}
+            <div className="lg:col-span-1">
+              <div className={`border p-6 sticky top-6 ${
+                isDark
+                  ? "bg-neutral-900 border-neutral-800"
+                  : "bg-white border-neutral-200 shadow-md"
+              }`}>
+                <h2 className={`text-xl font-bold mb-6 ${
+                  isDark ? "text-white" : "text-neutral-900"
+                }`}>Visibility</h2>
+
+                {/* Publish Toggle */}
+                <div className={`p-4 border mb-6 ${
+                  isDark
+                    ? "border-neutral-800 bg-neutral-950"
+                    : "border-neutral-200 bg-neutral-50"
+                }`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <p className={`font-bold ${
+                        isDark ? "text-white" : "text-neutral-900"
+                      }`}>
+                        {isPublished ? "Public" : "Private"}
+                      </p>
+                      <p className={`text-xs font-semibold mt-1 ${
+                        isDark ? "text-neutral-400" : "text-neutral-600"
+                      }`}>
+                        {isPublished
+                          ? "Everyone can watch your video"
+                          : "Only you can watch your video"}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsPublished(!isPublished)}
+                      className={`relative inline-flex h-8 w-14 items-center transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${
+                        isPublished ? "bg-orange-500" : isDark ? "bg-neutral-700" : "bg-neutral-300"
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-6 w-6 transform bg-white transition-transform ${
+                          isPublished ? "translate-x-7" : "translate-x-1"
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.querySelector('form').requestSubmit();
+                  }}
+                  disabled={loading}
+                  className="w-full py-3 bg-orange-500 text-white font-bold hover:bg-orange-600 transition-all duration-200 hover:scale-105 active:scale-95 disabled:bg-neutral-600 disabled:cursor-not-allowed disabled:hover:scale-100 mb-4"
+                >
+                  {loading ? "Uploading..." : "Upload Video"}
+                </button>
+
+                {/* Info */}
+                <div className={`text-xs font-semibold space-y-2 ${
+                  isDark ? "text-neutral-500" : "text-neutral-500"
+                }`}>
+                  <p>• Your video will be processed after upload</p>
+                  <p>• Maximum file size: 5MB</p>
+                  <p>• Supported formats: MP4, AVI, MOV</p>
+                </div>
+              </div>
+            </div>
+          </div>
           {/* ...existing code... */}
         </div>
       </div>
