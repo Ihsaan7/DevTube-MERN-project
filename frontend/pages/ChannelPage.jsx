@@ -142,8 +142,8 @@ const ChannelPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
             className={`${
-              channelData?.coverImage ? "-mt-16" : "pt-8"
-            } pb-6 border-b ${
+              channelData?.coverImage ? "" : "pt-16"
+            } pb-8 border-b ${
               isDark ? "border-neutral-800" : "border-neutral-200"
             }`}
           >
@@ -152,9 +152,9 @@ const ChannelPage = () => {
               <img
                 src={channelData?.avatar || "/default-avatar.png"}
                 alt={channelData?.username}
-                className={`w-32 h-32 rounded-full border-4 shadow-xl object-cover ${
-                  isDark ? "border-neutral-950" : "border-white"
-                }`}
+                className={`w-32 h-32 rounded-full border-4 shadow-xl object-cover relative z-10 ${
+                  channelData?.coverImage ? "-mt-20" : ""
+                } ${isDark ? "border-neutral-950" : "border-white"}`}
               />
 
               {/* Info and Actions */}
