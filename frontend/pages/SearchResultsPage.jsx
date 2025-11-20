@@ -97,10 +97,38 @@ const SearchResultsPage = () => {
             )}
           </div>
 
-          {/* Loading State */}
+          {/* Loading State - Responsive Skeleton Grid */}
           {loading && (
-            <div className="flex items-center justify-center py-20">
-              <div className="animate-spin h-12 w-12 border-4 border-orange-500 border-t-transparent"></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 py-8 animate-pulse">
+              {[...Array(8)].map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`border overflow-hidden transition-all duration-200 ${
+                    isDark
+                      ? "bg-neutral-900 border-neutral-800"
+                      : "bg-white border-neutral-200 shadow-md"
+                  }`}
+                >
+                  {/* Thumbnail skeleton */}
+                  <div className="relative overflow-hidden">
+                    <div className="w-full h-48 bg-neutral-700/30 dark:bg-neutral-800/60" />
+                    <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded w-12 h-5" />
+                  </div>
+                  {/* Info skeleton */}
+                  <div className="p-4">
+                    <div className={`h-5 w-3/4 mb-3 rounded bg-neutral-300/40 dark:bg-neutral-700/60`} />
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 rounded-full bg-neutral-300/40 dark:bg-neutral-700/60" />
+                      <div className="h-4 w-1/3 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="h-3 w-12 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                      <div className="h-3 w-3 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                      <div className="h-3 w-16 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
@@ -187,11 +215,12 @@ const SearchResultsPage = () => {
               {videos.map((video) => (
                 <div
                   key={video._id}
-                  className={`border overflow-hidden cursor-pointer transition-all duration-200 group ${
+                  className={`border overflow-hidden cursor-pointer transition-all duration-300 group ${
                     isDark
                       ? "bg-neutral-900 border-neutral-800 hover:border-neutral-700"
                       : "bg-white border-neutral-200 hover:border-neutral-300 shadow-md hover:shadow-xl"
                   }`}
+                  style={{ willChange: 'transform, box-shadow' }}
                   onClick={() => navigate(`/video/${video._id}`)}
                 >
                   {/* Thumbnail */}
@@ -201,7 +230,7 @@ const SearchResultsPage = () => {
                       alt={video.title}
                       className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
                     />
-                    <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 font-medium">
+                    <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 font-medium rounded">
                       {formatDuration(video.duration)}
                     </div>
                   </div>
@@ -211,7 +240,7 @@ const SearchResultsPage = () => {
                     <h4
                       className={`font-semibold line-clamp-2 mb-3 ${
                         isDark ? "text-white" : "text-neutral-900"
-                      }`}
+                      } transition-colors duration-200`}
                     >
                       {video.title}
                     </h4>
@@ -229,7 +258,7 @@ const SearchResultsPage = () => {
                       <p
                         className={`text-sm font-medium ${
                           isDark ? "text-neutral-400" : "text-neutral-600"
-                        }`}
+                        } transition-colors duration-200`}
                       >
                         {video.owner?.fullName || video.owner?.username}
                       </p>
@@ -239,7 +268,7 @@ const SearchResultsPage = () => {
                     <div
                       className={`flex items-center gap-2 text-xs font-medium ${
                         isDark ? "text-neutral-500" : "text-neutral-500"
-                      }`}
+                      } transition-colors duration-200`}
                     >
                       <span>{formatViews(video.view)} views</span>
                       <span>•</span>
