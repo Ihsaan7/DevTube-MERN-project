@@ -1,9 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getVideo, incrementVideoView } from "../api/services/video.services";
-import { likeVideo } from "../api/services/like.services";
+import { likeVideo, likeComment } from "../api/services/like.services";
 import { toggleSubscribe } from "../api/services/subscription.services";
-import { addComment, getAllComments } from "../api/services/comment.services";
+import {
+  addComment,
+  getAllComments,
+  updateComment,
+  deleteComment,
+} from "../api/services/comment.services";
 import Layout from "../components/layout/Layout";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
@@ -22,6 +27,8 @@ const VideoPlayerPage = () => {
   const [isDisliked, setIsDisliked] = useState(false);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState([]);
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editingCommentText, setEditingCommentText] = useState("");
   const [hasIncrementedView, setHasIncrementedView] = useState(false);
   const videoRef = useRef(null);
 
@@ -49,7 +56,9 @@ const VideoPlayerPage = () => {
   const fetchComments = async () => {
     try {
       const response = await getAllComments(videoId);
-      const commentsData = response.data?.comments || response.data || [];
+
+      // Backend returns paginated data: { docs, totalDocs, limit, page, etc }
+      const commentsData = response.data?.docs || response.data?.comments || [];
 
       // Ensure it's always an array
       if (Array.isArray(commentsData)) {
@@ -143,10 +152,15 @@ const VideoPlayerPage = () => {
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return "Just now";
+
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Just now";
+
     const now = new Date();
     const diffInSeconds = Math.floor((now - date) / 1000);
 
+    if (diffInSeconds < 0) return "Just now";
     if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`;
     if (diffInSeconds < 3600)
       return `${Math.floor(diffInSeconds / 60)} minutes ago`;
@@ -180,6 +194,71 @@ const VideoPlayerPage = () => {
       } catch (err) {
         console.error("Failed to increment view:", err);
       }
+    }
+  };
+
+  const handleEditComment = (commentId, currentText) => {
+    setEditingCommentId(commentId);
+    setEditingCommentText(currentText);
+  };
+
+  const handleSaveEdit = async (commentId) => {
+    if (!editingCommentText.trim()) return;
+
+    try {
+      await updateComment(commentId, editingCommentText);
+
+      // Update comment in local state
+      setComments(
+        comments.map((c) =>
+          c._id === commentId ? { ...c, content: editingCommentText } : c
+        )
+      );
+
+      setEditingCommentId(null);
+      setEditingCommentText("");
+    } catch (err) {
+      console.error("Failed to update comment:", err);
+      alert("Failed to update comment. Please try again.");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCommentId(null);
+    setEditingCommentText("");
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    if (!confirm("Are you sure you want to delete this comment?")) return;
+
+    try {
+      await deleteComment(commentId);
+
+      // Remove comment from local state
+      setComments(comments.filter((c) => c._id !== commentId));
+    } catch (err) {
+      console.error("Failed to delete comment:", err);
+      alert("Failed to delete comment. Please try again.");
+    }
+  };
+
+  const handleLikeComment = async (commentId) => {
+    try {
+      await likeComment(commentId);
+      // Toggle like in UI (simplified - in production, fetch like status from backend)
+      setComments(
+        comments.map((c) =>
+          c._id === commentId
+            ? {
+                ...c,
+                isLiked: !c.isLiked,
+                likesCount: (c.likesCount || 0) + (c.isLiked ? -1 : 1),
+              }
+            : c
+        )
+      );
+    } catch (err) {
+      console.error("Failed to like comment:", err);
     }
   };
 
@@ -447,70 +526,155 @@ const VideoPlayerPage = () => {
               {/* Comments List */}
               <div className="space-y-6">
                 {Array.isArray(comments) &&
-                  comments.map((comment) => (
-                    <div key={comment._id} className="flex gap-3">
+                  comments.map((commentItem) => (
+                    <div key={commentItem._id} className="flex gap-3">
                       <img
-                        src={comment.owner?.avatar || "/default-avatar.png"}
-                        alt={comment.owner?.username}
+                        src={commentItem.owner?.avatar || "/default-avatar.png"}
+                        alt={commentItem.owner?.username}
                         className="w-10 h-10 rounded-full object-cover"
                       />
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span
-                            className={`font-semibold text-sm ${
-                              isDark ? "text-white" : "text-neutral-900"
-                            }`}
-                          >
-                            {comment.owner?.username}
-                          </span>
-                          <span
-                            className={`text-xs font-medium ${
-                              isDark ? "text-neutral-500" : "text-neutral-500"
-                            }`}
-                          >
-                            {formatDate(comment.createdAt)}
-                          </span>
-                        </div>
-                        <p
-                          className={`text-sm mb-2 text-left ${
-                            isDark ? "text-neutral-300" : "text-neutral-700"
-                          }`}
-                        >
-                          {comment.content}
-                        </p>
-                        <div className="flex items-center gap-4">
-                          <button
-                            className={`flex items-center gap-1 text-sm font-medium transition-colors ${
-                              isDark
-                                ? "text-neutral-400 hover:text-white"
-                                : "text-neutral-600 hover:text-neutral-900"
-                            }`}
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`font-bold text-sm ${
+                                isDark ? "text-white" : "text-neutral-900"
+                              }`}
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
-                              />
-                            </svg>
-                            <span>0</span>
-                          </button>
-                          <button
-                            className={`text-sm font-semibold transition-colors ${
-                              isDark
-                                ? "text-neutral-400 hover:text-white"
-                                : "text-neutral-600 hover:text-neutral-900"
-                            }`}
-                          >
-                            Reply
-                          </button>
+                              {commentItem.owner?.username}
+                            </span>
+                            <span
+                              className={`text-xs font-semibold ${
+                                isDark ? "text-neutral-500" : "text-neutral-500"
+                              }`}
+                            >
+                              {formatDate(commentItem.createdAt)}
+                            </span>
+                          </div>
+
+                          {/* Edit/Delete buttons - only show for own comments */}
+                          {user?._id === commentItem.owner?._id &&
+                            editingCommentId !== commentItem._id && (
+                              <div className="flex items-center gap-1">
+                                <button
+                                  onClick={() =>
+                                    handleEditComment(
+                                      commentItem._id,
+                                      commentItem.content
+                                    )
+                                  }
+                                  className={`flex items-center gap-1 px-2 py-1 text-xs font-semibold transition-all duration-200 hover:scale-105 ${
+                                    isDark
+                                      ? "text-neutral-400 hover:text-white hover:bg-neutral-800"
+                                      : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100"
+                                  }`}
+                                  title="Edit comment"
+                                >
+                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                  </svg>
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    handleDeleteComment(commentItem._id)
+                                  }
+                                  className={`flex items-center gap-1 px-2 py-1 text-xs font-semibold transition-all duration-200 hover:scale-105 ${
+                                    isDark
+                                      ? "text-red-400 hover:text-red-300 hover:bg-red-950"
+                                      : "text-red-600 hover:text-red-700 hover:bg-red-50"
+                                  }`}
+                                  title="Delete comment"
+                                >
+                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  </svg>
+                                  Delete
+                                </button>
+                              </div>
+                            )}
                         </div>
+
+                        {/* Comment content or edit form */}
+                        {editingCommentId === commentItem._id ? (
+                          <div className="mt-2">
+                            <input
+                              type="text"
+                              value={editingCommentText}
+                              onChange={(e) =>
+                                setEditingCommentText(e.target.value)
+                              }
+                              className={`w-full px-4 py-3 border-b-2 font-medium transition-colors focus:outline-none ${
+                                isDark
+                                  ? "bg-transparent border-neutral-800 text-white placeholder-neutral-600 focus:border-orange-500"
+                                  : "bg-transparent border-neutral-300 text-neutral-900 placeholder-neutral-400 focus:border-orange-500"
+                              }`}
+                              autoFocus
+                            />
+                            <div className="flex justify-end gap-2 mt-3">
+                              <button
+                                onClick={handleCancelEdit}
+                                className={`px-4 py-2 text-sm font-semibold transition-all duration-200 hover:scale-105 ${
+                                  isDark
+                                    ? "text-neutral-400 hover:bg-neutral-900"
+                                    : "text-neutral-600 hover:bg-neutral-100"
+                                }`}
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                onClick={() => handleSaveEdit(commentItem._id)}
+                                disabled={!editingCommentText.trim()}
+                                className="px-4 py-2 text-sm bg-orange-500 text-white font-semibold hover:bg-orange-600 disabled:bg-neutral-700 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95"
+                              >
+                                Save
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <p
+                              className={`text-sm font-medium mb-3 text-left leading-relaxed ${
+                                isDark ? "text-neutral-300" : "text-neutral-700"
+                              }`}
+                            >
+                              {commentItem.content}
+                            </p>
+                            <div className="flex items-center gap-3">
+                              <button
+                                onClick={() =>
+                                  handleLikeComment(commentItem._id)
+                                }
+                                className={`flex items-center gap-1.5 px-2 py-1 text-xs font-semibold transition-all duration-200 hover:scale-105 ${
+                                  commentItem.isLiked
+                                    ? "text-orange-500 bg-orange-500/10"
+                                    : isDark
+                                    ? "text-neutral-400 hover:text-white hover:bg-neutral-800"
+                                    : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100"
+                                }`}
+                              >
+                                <svg
+                                  className="w-4 h-4"
+                                  fill={
+                                    commentItem.isLiked
+                                      ? "currentColor"
+                                      : "none"
+                                  }
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
+                                  />
+                                </svg>
+                                <span>{commentItem.likesCount || 0}</span>
+                              </button>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
                   ))}
