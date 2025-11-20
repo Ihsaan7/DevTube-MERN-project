@@ -77,18 +77,47 @@ const DashboardPage = () => {
   if (loading) {
     return (
       <Layout>
-        <div
-          className={`min-h-screen flex items-center justify-center ${
-            isDark ? "bg-neutral-950" : "bg-neutral-50"
-          }`}
-        >
-          <div className="text-center">
-            <div
-              className={`animate-spin w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full mx-auto mb-4`}
-            />
-            <p className={isDark ? "text-neutral-400" : "text-neutral-600"}>
-              Loading analytics...
-            </p>
+        <div className="max-w-[1800px] mx-auto px-4 py-6">
+          <div className="space-y-8">
+            {/* Stats skeleton */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-8">
+              {[...Array(4)].map((_, i) => (
+                <div
+                  key={i}
+                  className={`rounded-lg p-6 animate-pulse ${
+                    isDark ? "bg-neutral-900" : "bg-neutral-100"
+                  }`}
+                >
+                  <div className="h-8 w-2/3 bg-neutral-800 dark:bg-neutral-700 rounded mb-4" />
+                  <div className="h-4 w-1/2 bg-neutral-800 dark:bg-neutral-700 rounded" />
+                </div>
+              ))}
+            </div>
+            {/* Table skeleton */}
+            <div className="rounded-lg border overflow-x-auto">
+              <div className="min-w-[600px]">
+                {[...Array(6)].map((_, i) => (
+                  <div
+                    key={i}
+                    className={`flex items-center gap-4 border-b p-4 animate-pulse ${
+                      isDark ? "border-neutral-800" : "border-neutral-200"
+                    }`}
+                  >
+                    <div
+                      className={`w-24 h-16 rounded bg-neutral-800 dark:bg-neutral-700`}
+                    />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 w-2/3 bg-neutral-800 dark:bg-neutral-700 rounded" />
+                      <div className="h-3 w-1/2 bg-neutral-800 dark:bg-neutral-700 rounded" />
+                    </div>
+                    <div className="h-4 w-12 bg-neutral-800 dark:bg-neutral-700 rounded" />
+                    <div className="h-4 w-12 bg-neutral-800 dark:bg-neutral-700 rounded" />
+                    <div className="h-4 w-12 bg-neutral-800 dark:bg-neutral-700 rounded" />
+                    <div className="h-4 w-20 bg-neutral-800 dark:bg-neutral-700 rounded" />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </Layout>
@@ -170,7 +199,7 @@ const DashboardPage = () => {
           >
             <div className="flex items-start gap-3">
               <svg
-                className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5"
+                className="w-5 h-5 text-blue-500 shrink-0 mt-0.5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
