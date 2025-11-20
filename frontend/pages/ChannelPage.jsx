@@ -642,15 +642,12 @@ const ChannelPage = () => {
                     <p className="text-sm font-semibold mb-1">Full Name</p>
                     <p>{channelData?.fullName}</p>
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold mb-1">Email</p>
-                    {user && user.username === username && (
-                      <div>
-                        <p className="text-sm font-semibold mb-1">Email</p>
-                        <p>{channelData?.email}</p>
-                      </div>
-                    )}
-                  </div>
+                  {isOwnChannel && (
+                    <div>
+                      <p className="text-sm font-semibold mb-1">Email</p>
+                      <p>{channelData?.email}</p>
+                    </div>
+                  )}
                   <div>
                     <p className="text-sm font-semibold mb-1">Stats</p>
                     <p>
