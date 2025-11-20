@@ -72,18 +72,48 @@ const PlaylistDetailPage = () => {
   if (loading) {
     return (
       <Layout>
-        <div
-          className={`min-h-screen flex items-center justify-center ${
-            isDark ? "bg-neutral-950" : "bg-neutral-50"
-          }`}
-        >
-          <div className="text-center">
-            <div
-              className={`animate-spin w-12 h-12 border-4 border-orange-500 border-t-transparent rounded-full mx-auto mb-4`}
-            />
-            <p className={isDark ? "text-neutral-400" : "text-neutral-600"}>
-              Loading playlist...
-            </p>
+        <div className="max-w-[1800px] mx-auto px-4 py-6">
+          <div className="space-y-8">
+            {/* Playlist header skeleton */}
+            <div className="flex flex-col sm:flex-row gap-6 items-center sm:items-start">
+              <div className="w-32 h-32 rounded-full bg-neutral-800 dark:bg-neutral-700 animate-pulse" />
+              <div className="flex-1 space-y-4">
+                <div className="h-8 w-2/3 bg-neutral-800 dark:bg-neutral-700 rounded animate-pulse" />
+                <div className="h-4 w-1/2 bg-neutral-800 dark:bg-neutral-700 rounded animate-pulse" />
+                <div className="h-4 w-1/3 bg-neutral-800 dark:bg-neutral-700 rounded animate-pulse" />
+              </div>
+            </div>
+            {/* Videos skeleton */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 auto-rows-fr">
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  className={`border animate-pulse rounded-lg transition-all duration-200 ${
+                    isDark
+                      ? "bg-neutral-900 border-neutral-800"
+                      : "bg-white border-neutral-200"
+                  }`}
+                >
+                  <div
+                    className={`aspect-video rounded-t-lg ${
+                      isDark ? "bg-neutral-800" : "bg-neutral-200"
+                    }`}
+                  />
+                  <div className="p-4 space-y-3">
+                    <div
+                      className={`h-4 w-3/4 rounded ${
+                        isDark ? "bg-neutral-800" : "bg-neutral-200"
+                      }`}
+                    />
+                    <div
+                      className={`h-3 w-2/3 rounded ${
+                        isDark ? "bg-neutral-800" : "bg-neutral-200"
+                      }`}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </Layout>
@@ -291,7 +321,7 @@ const PlaylistDetailPage = () => {
                   {/* Thumbnail */}
                   <div
                     onClick={() => navigate(`/video/${video._id}`)}
-                    className="relative w-60 aspect-video flex-shrink-0 cursor-pointer group overflow-hidden"
+                    className="relative w-60 aspect-video shrink-0 cursor-pointer group overflow-hidden"
                   >
                     <img
                       src={video.thumbnail}
