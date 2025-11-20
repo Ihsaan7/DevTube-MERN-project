@@ -178,6 +178,87 @@ const SettingsPage = () => {
     }
   };
 
+  if (loading) {
+    // Responsive skeleton loader for settings page
+    return (
+      <Layout>
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          <div className="mb-8 animate-pulse">
+            <div
+              className={`h-8 w-1/3 mb-2 rounded bg-neutral-300/40 dark:bg-neutral-700/60`}
+            />
+            <div
+              className={`h-5 w-1/2 rounded bg-neutral-300/40 dark:bg-neutral-700/60`}
+            />
+          </div>
+          <div className="space-y-6">
+            {/* Profile Images Skeleton */}
+            <div
+              className={`border p-6 ${
+                isDark
+                  ? "bg-neutral-900 border-neutral-800"
+                  : "bg-white border-neutral-200"
+              }`}
+            >
+              <div
+                className={`h-6 w-1/4 mb-4 rounded bg-neutral-300/40 dark:bg-neutral-700/60`}
+              />
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-24 h-24 rounded-full bg-neutral-300/40 dark:bg-neutral-700/60" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-10 w-full rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                  <div className="h-8 w-1/2 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div className="w-full h-48 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                <div className="space-y-2">
+                  <div className="h-10 w-full rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                  <div className="h-8 w-1/2 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                </div>
+              </div>
+            </div>
+            {/* Account Details Skeleton */}
+            <div
+              className={`border p-6 ${
+                isDark
+                  ? "bg-neutral-900 border-neutral-800"
+                  : "bg-white border-neutral-200"
+              }`}
+            >
+              <div
+                className={`h-6 w-1/4 mb-4 rounded bg-neutral-300/40 dark:bg-neutral-700/60`}
+              />
+              <div className="space-y-4">
+                <div className="h-10 w-full rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                <div className="h-10 w-full rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                <div className="h-10 w-full rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                <div className="h-10 w-1/2 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+              </div>
+            </div>
+            {/* Change Password Skeleton */}
+            <div
+              className={`border p-6 ${
+                isDark
+                  ? "bg-neutral-900 border-neutral-800"
+                  : "bg-white border-neutral-200"
+              }`}
+            >
+              <div
+                className={`h-6 w-1/4 mb-4 rounded bg-neutral-300/40 dark:bg-neutral-700/60`}
+              />
+              <div className="space-y-4">
+                <div className="h-10 w-full rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                <div className="h-10 w-full rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                <div className="h-10 w-1/2 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+              </div>
+            </div>
+            <div className="h-12 w-full rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+          </div>
+        </div>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       <div className="max-w-4xl mx-auto px-6 py-8">
