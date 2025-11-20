@@ -6,6 +6,7 @@ import HomePage from "../pages/HomePage";
 import UploadVideoPage from "../pages/UploadVideoPage";
 import VideoPlayerPage from "../pages/VideoPlayerPage";
 import ChannelPage from "../pages/ChannelPage";
+import SearchResultsPage from "../pages/SearchResultsPage";
 import ProtectedRoute from "../components/ProtectedRoutes";
 
 function App() {
@@ -63,6 +64,16 @@ function App() {
         element={
           <ProtectedRoute>
             <ChannelPage />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Protected Route - Search Results */}
+      <Route
+        path="/search"
+        element={
+          <ProtectedRoute>
+            <SearchResultsPage />
           </ProtectedRoute>
         }
       />
