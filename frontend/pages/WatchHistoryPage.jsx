@@ -82,18 +82,60 @@ const WatchHistoryPage = () => {
   };
 
   if (loading) {
+    // Responsive skeleton grid loader
     return (
       <Layout>
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-            <p
-              className={`text-lg font-medium ${
-                isDark ? "text-neutral-400" : "text-neutral-600"
+        <div className="max-w-[1800px] mx-auto p-6">
+          <div className="flex items-center justify-between mb-8">
+            <h3
+              className={`text-3xl font-bold tracking-tight ${
+                isDark ? "text-white" : "text-neutral-900"
               }`}
             >
-              Loading watch history...
-            </p>
+              Watch History
+            </h3>
+            <div
+              className={`px-4 py-2 border font-semibold ${
+                isDark
+                  ? "border-neutral-700 text-neutral-300"
+                  : "border-neutral-300 text-neutral-700"
+              }`}
+            >
+              Loading...
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 auto-rows-fr">
+            {[...Array(8)].map((_, idx) => (
+              <div
+                key={idx}
+                className={`border overflow-hidden transition-all duration-200 animate-pulse ${
+                  isDark
+                    ? "bg-neutral-900 border-neutral-800"
+                    : "bg-white border-neutral-200 shadow-md"
+                }`}
+              >
+                {/* Thumbnail skeleton */}
+                <div className="relative overflow-hidden">
+                  <div className="w-full h-48 bg-neutral-700/30 dark:bg-neutral-800/60" />
+                  <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded w-12 h-5" />
+                </div>
+                {/* Info skeleton */}
+                <div className="p-4">
+                  <div
+                    className={`h-5 w-3/4 mb-3 rounded bg-neutral-300/40 dark:bg-neutral-700/60`}
+                  />
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-8 h-8 rounded-full bg-neutral-300/40 dark:bg-neutral-700/60" />
+                    <div className="h-4 w-1/3 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-3 w-12 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                    <div className="h-3 w-3 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                    <div className="h-3 w-16 rounded bg-neutral-300/40 dark:bg-neutral-700/60" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </Layout>
@@ -300,143 +342,144 @@ const WatchHistoryPage = () => {
         {/* Main Content */}
         <main className="flex-1 p-6">
           <div className="max-w-[1800px] mx-auto">
-              {/* Header */}
-              <div className="flex items-center justify-between mb-8">
-                <h3
-                  className={`text-3xl font-bold tracking-tight ${
-                    isDark ? "text-white" : "text-neutral-900"
-                  }`}
-                >
-                  Watch History
-                </h3>
-                <div
-                  className={`px-4 py-2 border font-semibold ${
-                    isDark
-                      ? "border-neutral-700 text-neutral-300"
-                      : "border-neutral-300 text-neutral-700"
-                  }`}
-                >
-                  {videos.length} {videos.length === 1 ? "video" : "videos"}
-                </div>
+            {/* Header */}
+            <div className="flex items-center justify-between mb-8">
+              <h3
+                className={`text-3xl font-bold tracking-tight ${
+                  isDark ? "text-white" : "text-neutral-900"
+                }`}
+              >
+                Watch History
+              </h3>
+              <div
+                className={`px-4 py-2 border font-semibold ${
+                  isDark
+                    ? "border-neutral-700 text-neutral-300"
+                    : "border-neutral-300 text-neutral-700"
+                }`}
+              >
+                {videos.length} {videos.length === 1 ? "video" : "videos"}
               </div>
+            </div>
 
-              {/* Videos Grid */}
-              {videos.length === 0 ? (
-                <div
-                  className={`border p-12 text-center ${
-                    isDark
-                      ? "bg-neutral-900 border-neutral-800"
-                      : "bg-white border-neutral-200"
+            {/* Videos Grid */}
+            {videos.length === 0 ? (
+              <div
+                className={`border p-12 text-center ${
+                  isDark
+                    ? "bg-neutral-900 border-neutral-800"
+                    : "bg-white border-neutral-200"
+                }`}
+              >
+                <svg
+                  className={`w-24 h-24 mx-auto mb-6 ${
+                    isDark ? "text-neutral-700" : "text-neutral-300"
+                  }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <h3
+                  className={`text-xl font-semibold mb-2 ${
+                    isDark ? "text-neutral-300" : "text-neutral-700"
                   }`}
                 >
-                  <svg
-                    className={`w-24 h-24 mx-auto mb-6 ${
-                      isDark ? "text-neutral-700" : "text-neutral-300"
+                  No watch history yet
+                </h3>
+                <p
+                  className={`mb-6 font-semibold ${
+                    isDark ? "text-neutral-500" : "text-neutral-500"
+                  }`}
+                >
+                  Videos you watch will appear here
+                </p>
+                <button
+                  onClick={() => navigate("/home")}
+                  className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
+                >
+                  Explore Videos
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 auto-rows-fr">
+                {videos.map((video) => (
+                  <div
+                    key={video._id}
+                    onClick={() => handleVideoClick(video._id)}
+                    className={`border overflow-hidden transition-all duration-300 cursor-pointer group ${
+                      isDark
+                        ? "bg-neutral-900 border-neutral-800 hover:border-neutral-700"
+                        : "bg-white border-neutral-200 hover:border-neutral-300 shadow-md hover:shadow-xl"
                     }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    style={{ willChange: "transform, box-shadow" }}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <h3
-                    className={`text-xl font-semibold mb-2 ${
-                      isDark ? "text-neutral-300" : "text-neutral-700"
-                    }`}
-                  >
-                    No watch history yet
-                  </h3>
-                  <p
-                    className={`mb-6 font-semibold ${
-                      isDark ? "text-neutral-500" : "text-neutral-500"
-                    }`}
-                  >
-                    Videos you watch will appear here
-                  </p>
-                  <button
-                    onClick={() => navigate("/home")}
-                    className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
-                  >
-                    Explore Videos
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 auto-rows-fr">
-                  {videos.map((video) => (
-                    <div
-                      key={video._id}
-                      onClick={() => handleVideoClick(video._id)}
-                      className={`border overflow-hidden transition-all duration-200 cursor-pointer group ${
-                        isDark
-                          ? "bg-neutral-900 border-neutral-800 hover:border-neutral-700"
-                          : "bg-white border-neutral-200 hover:border-neutral-300 shadow-md hover:shadow-xl"
-                      }`}
-                    >
-                      {/* Thumbnail */}
-                      <div className="relative overflow-hidden">
-                        <img
-                          src={
-                            video.thumbnail ||
-                            "https://via.placeholder.com/320x180"
-                          }
-                          alt={video.title}
-                          className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                        {/* Duration Badge */}
-                        <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 font-medium">
-                          {formatDuration(video.duration)}
-                        </div>
-                      </div>
-
-                      {/* Video Info */}
-                      <div className="p-4">
-                        <h4
-                          className={`font-semibold tracking-tight line-clamp-2 mb-3 ${
-                            isDark ? "text-white" : "text-neutral-900"
-                          }`}
-                        >
-                          {video.title}
-                        </h4>
-
-                        {/* Channel Info */}
-                        <div className="flex items-center gap-2 mb-2">
-                          <img
-                            src={
-                              video.owner?.avatar ||
-                              "https://via.placeholder.com/32"
-                            }
-                            alt={video.owner?.username}
-                            className="w-8 h-8 rounded-full object-cover"
-                          />
-                          <p
-                            className={`text-sm font-medium ${
-                              isDark ? "text-neutral-400" : "text-neutral-600"
-                            }`}
-                          >
-                            {video.owner?.fullName || video.owner?.username}
-                          </p>
-                        </div>
-
-                        {/* Stats */}
-                        <div
-                          className={`flex items-center gap-2 text-xs font-medium ${
-                            isDark ? "text-neutral-500" : "text-neutral-500"
-                          }`}
-                        >
-                          <span>{formatViews(video.view || 0)} views</span>
-                          <span>•</span>
-                          <span>{timeAgo(video.createdAt)}</span>
-                        </div>
+                    {/* Thumbnail */}
+                    <div className="relative overflow-hidden">
+                      <img
+                        src={
+                          video.thumbnail ||
+                          "https://via.placeholder.com/320x180"
+                        }
+                        alt={video.title}
+                        className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                      {/* Duration Badge */}
+                      <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 font-medium rounded">
+                        {formatDuration(video.duration)}
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
+
+                    {/* Video Info */}
+                    <div className="p-4">
+                      <h4
+                        className={`font-semibold tracking-tight line-clamp-2 mb-3 ${
+                          isDark ? "text-white" : "text-neutral-900"
+                        } transition-colors duration-200`}
+                      >
+                        {video.title}
+                      </h4>
+
+                      {/* Channel Info */}
+                      <div className="flex items-center gap-2 mb-2">
+                        <img
+                          src={
+                            video.owner?.avatar ||
+                            "https://via.placeholder.com/32"
+                          }
+                          alt={video.owner?.username}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
+                        <p
+                          className={`text-sm font-medium ${
+                            isDark ? "text-neutral-400" : "text-neutral-600"
+                          } transition-colors duration-200`}
+                        >
+                          {video.owner?.fullName || video.owner?.username}
+                        </p>
+                      </div>
+
+                      {/* Stats */}
+                      <div
+                        className={`flex items-center gap-2 text-xs font-medium ${
+                          isDark ? "text-neutral-500" : "text-neutral-500"
+                        } transition-colors duration-200`}
+                      >
+                        <span>{formatViews(video.view || 0)} views</span>
+                        <span>•</span>
+                        <span>{timeAgo(video.createdAt)}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </main>
       </div>
