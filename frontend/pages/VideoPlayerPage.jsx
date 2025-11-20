@@ -9,6 +9,10 @@ import {
   updateComment,
   deleteComment,
 } from "../api/services/comment.services";
+import {
+  getUserPlaylists,
+  addVideoToPlaylist,
+} from "../api/services/playlist.services";
 import Layout from "../components/layout/Layout";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
@@ -30,6 +34,10 @@ const VideoPlayerPage = () => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editingCommentText, setEditingCommentText] = useState("");
   const [hasIncrementedView, setHasIncrementedView] = useState(false);
+  const [showPlaylistModal, setShowPlaylistModal] = useState(false);
+  const [playlists, setPlaylists] = useState([]);
+  const [playlistsLoading, setPlaylistsLoading] = useState(false);
+  const [addingToPlaylist, setAddingToPlaylist] = useState(null);
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -262,6 +270,33 @@ const VideoPlayerPage = () => {
     }
   };
 
+  const handleOpenPlaylistModal = async () => {
+    setShowPlaylistModal(true);
+    setPlaylistsLoading(true);
+    try {
+      const response = await getUserPlaylists();
+      setPlaylists(response.data || []);
+    } catch (err) {
+      console.error("Failed to load playlists:", err);
+      alert("Failed to load playlists");
+    } finally {
+      setPlaylistsLoading(false);
+    }
+  };
+
+  const handleAddToPlaylist = async (playlistId) => {
+    try {
+      setAddingToPlaylist(playlistId);
+      await addVideoToPlaylist(playlistId, videoId);
+      alert("Video added to playlist!");
+    } catch (err) {
+      console.error("Failed to add to playlist:", err);
+      alert(err.response?.data?.message || "Failed to add video to playlist");
+    } finally {
+      setAddingToPlaylist(null);
+    }
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -392,6 +427,31 @@ const VideoPlayerPage = () => {
                     />
                   </svg>
                   <span>Share</span>
+                </button>
+
+                {/* Add to Playlist Button */}
+                <button
+                  onClick={handleOpenPlaylistModal}
+                  className={`flex items-center gap-2 px-4 py-2 border font-semibold transition-all duration-200 ${
+                    isDark
+                      ? "border-neutral-700 text-neutral-300 hover:bg-neutral-800"
+                      : "border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+                  }`}
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  <span>Save</span>
                 </button>
               </div>
             </div>
@@ -701,6 +761,153 @@ const VideoPlayerPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Add to Playlist Modal */}
+      {showPlaylistModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div
+            className={`w-full max-w-md border ${
+              isDark
+                ? "bg-neutral-900 border-neutral-800"
+                : "bg-white border-neutral-200"
+            }`}
+          >
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2
+                  className={`text-xl font-bold ${
+                    isDark ? "text-white" : "text-neutral-900"
+                  }`}
+                >
+                  Save to Playlist
+                </h2>
+                <button
+                  onClick={() => setShowPlaylistModal(false)}
+                  className={`p-1 transition-colors ${
+                    isDark
+                      ? "text-neutral-400 hover:text-white"
+                      : "text-neutral-600 hover:text-neutral-900"
+                  }`}
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              {playlistsLoading ? (
+                <div className="py-8 text-center">
+                  <div
+                    className={`animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full mx-auto`}
+                  />
+                </div>
+              ) : playlists.length === 0 ? (
+                <div className="py-8 text-center">
+                  <p
+                    className={`mb-4 ${
+                      isDark ? "text-neutral-400" : "text-neutral-600"
+                    }`}
+                  >
+                    No playlists yet
+                  </p>
+                  <button
+                    onClick={() => {
+                      setShowPlaylistModal(false);
+                      navigate("/playlists");
+                    }}
+                    className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold transition-colors"
+                  >
+                    Create Playlist
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  {playlists.map((playlist) => (
+                    <button
+                      key={playlist._id}
+                      onClick={() => handleAddToPlaylist(playlist._id)}
+                      disabled={addingToPlaylist === playlist._id}
+                      className={`w-full flex items-center justify-between p-3 border transition-colors text-left ${
+                        addingToPlaylist === playlist._id
+                          ? "opacity-50 cursor-wait"
+                          : isDark
+                          ? "border-neutral-800 hover:bg-neutral-800"
+                          : "border-neutral-200 hover:bg-neutral-50"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <svg
+                          className={`w-5 h-5 flex-shrink-0 ${
+                            isDark ? "text-neutral-400" : "text-neutral-600"
+                          }`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                          />
+                        </svg>
+                        <div className="flex-1 min-w-0">
+                          <p
+                            className={`font-medium truncate ${
+                              isDark ? "text-white" : "text-neutral-900"
+                            }`}
+                          >
+                            {playlist.name}
+                          </p>
+                          <p
+                            className={`text-xs ${
+                              isDark ? "text-neutral-500" : "text-neutral-500"
+                            }`}
+                          >
+                            {playlist.videoCount || 0} video
+                            {playlist.videoCount !== 1 ? "s" : ""}
+                          </p>
+                        </div>
+                      </div>
+                      {addingToPlaylist === playlist._id && (
+                        <div
+                          className={`animate-spin w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full`}
+                        />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-4 pt-4 border-t ${isDark ? 'border-neutral-800' : 'border-neutral-200'}">
+                <button
+                  onClick={() => {
+                    setShowPlaylistModal(false);
+                    navigate("/playlists");
+                  }}
+                  className={`w-full px-4 py-2 border font-semibold transition-colors ${
+                    isDark
+                      ? "border-neutral-700 text-neutral-300 hover:bg-neutral-800"
+                      : "border-neutral-300 text-neutral-700 hover:bg-neutral-50"
+                  }`}
+                >
+                  Manage Playlists
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };
