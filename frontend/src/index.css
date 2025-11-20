@@ -1,5 +1,27 @@
+/* Sidebar icon and text size for medium-large screens */
+@media (min-width: 1400px) and (min-height: 900px) {
+  .sidebar-icon {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+  .sidebar-text {
+    font-size: 1.125rem !important;
+    font-weight: 600;
+  }
+}
+
+/* Fix video grid for 1680x1050 screens and up */
+@media (min-width: 1400px) {
+  .home-video-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2rem;
+    margin-left: 0;
+    max-width: 100vw;
+  }
+}
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 
 html,
 body {
@@ -8,7 +30,7 @@ body {
 }
 
 :root {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -20,8 +42,8 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: 'cv11', 'ss01';
-  font-variation-settings: 'opsz' 32;
+  font-feature-settings: "cv11", "ss01";
+  font-variation-settings: "opsz" 32;
 }
 
 @keyframes slideIn {
