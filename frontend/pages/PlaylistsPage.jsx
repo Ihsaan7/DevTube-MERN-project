@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import Layout from "../components/layout/Layout";
+import Toast from "../components/ui/Toast";
+import ConfirmDialog from "../components/ui/ConfirmDialog";
 import {
   getUserPlaylists,
   createPlaylist,
@@ -36,6 +38,10 @@ const PlaylistsPage = () => {
 
   // Delete states
   const [deleteLoading, setDeleteLoading] = useState(null);
+
+  // Toast and Confirm Dialog states
+  const [toast, setToast] = useState(null);
+  const [confirmDialog, setConfirmDialog] = useState(null);
 
   // Fetch playlists
   useEffect(() => {
@@ -79,9 +85,10 @@ const PlaylistsPage = () => {
       setCreateDescription("");
       setCreateIsPublic(true);
       await fetchPlaylists();
+      setToast({ message: "Playlist created successfully", type: "success" });
     } catch (err) {
       console.error("Error creating playlist:", err);
-      alert(err.response?.data?.message || "Failed to create playlist");
+      setToast({ message: err.response?.data?.message || "Failed to create playlist", type: "error" });
     } finally {
       setCreateLoading(false);
     }
@@ -112,28 +119,33 @@ const PlaylistsPage = () => {
       setShowEditModal(false);
       setEditingPlaylist(null);
       fetchPlaylists();
+      setToast({ message: "Playlist updated successfully", type: "success" });
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to update playlist");
+      setToast({ message: err.response?.data?.message || "Failed to update playlist", type: "error" });
     } finally {
       setEditLoading(false);
     }
   };
 
   // Handle delete playlist
-  const handleDeletePlaylist = async (playlistId) => {
-    if (!confirm("Are you sure you want to delete this playlist?")) {
-      return;
-    }
-
-    try {
-      setDeleteLoading(playlistId);
-      await deletePlaylist(playlistId);
-      fetchPlaylists();
-    } catch (err) {
-      alert(err.response?.data?.message || "Failed to delete playlist");
-    } finally {
-      setDeleteLoading(null);
-    }
+  const handleDeletePlaylist = (playlistId) => {
+    setConfirmDialog({
+      message: "Are you sure you want to delete this playlist?",
+      onConfirm: async () => {
+        try {
+          setDeleteLoading(playlistId);
+          await deletePlaylist(playlistId);
+          fetchPlaylists();
+          setToast({ message: "Playlist deleted successfully", type: "success" });
+        } catch (err) {
+          setToast({ message: err.response?.data?.message || "Failed to delete playlist", type: "error" });
+        } finally {
+          setDeleteLoading(null);
+        }
+        setConfirmDialog(null);
+      },
+      onCancel: () => setConfirmDialog(null),
+    });
   };
 
   return (
@@ -593,6 +605,24 @@ const PlaylistsPage = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+
+      {/* Confirm Dialog */}
+      {confirmDialog && (
+        <ConfirmDialog
+          message={confirmDialog.message}
+          onConfirm={confirmDialog.onConfirm}
+          onCancel={confirmDialog.onCancel}
+        />
       )}
     </Layout>
   );
